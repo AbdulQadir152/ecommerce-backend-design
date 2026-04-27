@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <section class="section">
+    <div class="container">
+      <a href="/products" class="back-link">← Back to Products</a>
+      <div class="detail-wrapper">
+        <div class="detail-image">
+          <img src="<%= product.image %>" alt="<%= product.name %>" onerror="this.src='/assets/images/placeholder.jpg'" />
+        </div>
+        <div class="detail-info">
+          <span class="category"><%= product.category %></span>
+          <h1><%= product.name %></h1>
+          <p class="price">$<%= product.price.toFixed(2) %></p>
+          <p class="description"><%= product.description %></p>
+          <p class="stock"><%= product.stock > 0 ? `✅ In Stock (${product.stock} available)` : '❌ Out of Stock' %></p>
+          <button class="btn btn-primary">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>
