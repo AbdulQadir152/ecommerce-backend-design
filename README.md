@@ -26,9 +26,10 @@ A full-stack eCommerce web application built as part of the **DevelopersHub Inte
 | Deployment | Render / Vercel (Week 3)          |
 | Version Control | Git & GitHub                 |
 
----
 
 ## 📁 Project Structure
+
+```bash
 ecommerce-backend-design/
 ├── routes/
 │   └── index.js          # All application routes
@@ -49,8 +50,8 @@ ecommerce-backend-design/
 ├── app.js                # Express server entry point
 ├── package.json
 └── .gitignore
+```
 
----
 
 ## ⚙️ Getting Started
 
