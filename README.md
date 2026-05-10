@@ -1,4 +1,4 @@
-# 🛒 ShopEase - eCommerce Web Application
+# 🛒 ShopEase - E-commerce Web Application
 
 <p>
   A full-stack eCommerce web application built as part of the 
