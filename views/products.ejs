@@ -12,19 +12,47 @@
   <section class="section">
     <div class="container">
       <h2 class="section-title">All Products</h2>
-      <div class="product-grid">
-        <% products.forEach(product => { %>
-          <div class="product-card">
-            <img src="<%= product.image %>" alt="<%= product.name %>" onerror="this.onerror=null; this.src='https://placehold.co/400x220?text=No+Image'" />
-            <div class="product-info">
-              <span class="category"><%= product.category %></span>
-              <h3><%= product.name %></h3>
-              <p class="price">$<%= product.price.toFixed(2) %></p>
-              <a href="/products/<%= product.id %>" class="btn btn-outline">View Details</a>
+
+      <!-- Search Bar -->
+      <form class="search-form" action="/products" method="GET">
+        <input
+          type="text"
+          name="search"
+          placeholder="Search by name or category..."
+          value="<%= search %>"
+          class="search-input"
+        />
+        <button type="submit" class="btn btn-primary">Search</button>
+        <% if (search) { %>
+          <a href="/products" class="btn btn-outline">Clear</a>
+        <% } %>
+      </form>
+
+      <% if (search) { %>
+        <p class="search-result-text">
+          Showing results for "<strong><%= search %></strong>" — <%= products.length %> product(s) found
+        </p>
+      <% } %>
+
+      <% if (products.length === 0) { %>
+        <div class="no-results">
+          <p>No products found. <a href="/products">View all products</a></p>
+        </div>
+      <% } else { %>
+        <div class="product-grid">
+          <% products.forEach(product => { %>
+            <div class="product-card">
+              <img src="<%= product.image %>" alt="<%= product.name %>" onerror="this.onerror=null; this.src='https://placehold.co/400x220?text=No+Image'" />
+              <div class="product-info">
+                <span class="category"><%= product.category %></span>
+                <h3><%= product.name %></h3>
+                <p class="price">$<%= product.price.toFixed(2) %></p>
+                <a href="/products/<%= product._id %>" class="btn btn-outline">View Details</a>
+              </div>
             </div>
-          </div>
-        <% }) %>
-      </div>
+          <% }) %>
+        </div>
+      <% } %>
     </div>
   </section>
 
