@@ -2,7 +2,10 @@ const express    = require('express');
 const path       = require('path');
 const mongoose   = require('mongoose');
 const cookieParser = require('cookie-parser');
-require('dotenv').config();
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 const { setUser } = require('./middleware/auth');
 const app = express();
