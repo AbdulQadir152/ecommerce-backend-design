@@ -21,8 +21,33 @@
           <h1><%= product.name %></h1>
           <p class="price">$<%= product.price.toFixed(2) %></p>
           <p class="description"><%= product.description %></p>
-          <p class="stock"><%= product.stock > 0 ? `✅ In Stock (${product.stock} available)` : '❌ Out of Stock' %></p>
-          <button class="btn btn-primary">Add to Cart</button>
+          <p class="stock" id="stock-display">
+            <% if (product.stock > 0) { %>
+              ✅ In Stock (<span id="stock-count"><%= product.stock %></span> available)
+            <% } else { %>
+              ❌ Out of Stock
+            <% } %>
+          </p>
+
+          <% if (user) { %>
+            <% if (user.role === 'admin') { %>
+              <!-- Admins manage products, not shop -->
+            <% } else if (product.stock > 0) { %>
+              <button
+                id="add-to-cart-btn"
+                class="btn btn-primary"
+                onclick="addToCart('<%= product._id %>', <%= product.price %>)"
+              >
+                Add to Cart
+              </button>
+            <% } else { %>
+              <button class="btn btn-primary" disabled style="opacity:0.5;cursor:not-allowed;">Out of Stock</button>
+            <% } %>
+          <% } else { %>
+            <a href="/login" class="btn btn-primary">Login to Add to Cart</a>
+          <% } %>
+
+          <div id="cart-feedback" class="cart-feedback" style="display:none;"></div>
         </div>
       </div>
     </div>
@@ -30,5 +55,59 @@
 
   <%- include('partials/footer') %>
   <script src="/js/main.js"></script>
+  <script>
+    async function addToCart(productId) {
+      const btn      = document.getElementById('add-to-cart-btn');
+      const feedback = document.getElementById('cart-feedback');
+
+      btn.disabled   = true;
+      btn.textContent = 'Adding…';
+
+      try {
+        const res  = await fetch(`/cart/add/${productId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          // Update stock display
+          const stockCount = document.getElementById('stock-count');
+          if (stockCount) stockCount.textContent = data.stock;
+          if (data.stock === 0) {
+            document.getElementById('stock-display').innerHTML = '❌ Out of Stock';
+            btn.style.opacity = '0.5';
+            btn.style.cursor  = 'not-allowed';
+            btn.textContent   = 'Out of Stock';
+            // keep disabled
+          } else {
+            btn.disabled    = false;
+            btn.textContent = 'Add to Cart';
+          }
+
+          // Update cart badge in header
+          updateCartBadge(data.totalItems);
+
+          // Show feedback
+          feedback.textContent = '✅ Added to cart!';
+          feedback.className   = 'cart-feedback success';
+          feedback.style.display = 'block';
+          setTimeout(() => { feedback.style.display = 'none'; }, 2500);
+        } else {
+          feedback.textContent = '⚠️ ' + data.message;
+          feedback.className   = 'cart-feedback error';
+          feedback.style.display = 'block';
+          btn.disabled    = false;
+          btn.textContent = 'Add to Cart';
+        }
+      } catch (err) {
+        feedback.textContent = '⚠️ Something went wrong.';
+        feedback.className   = 'cart-feedback error';
+        feedback.style.display = 'block';
+        btn.disabled    = false;
+        btn.textContent = 'Add to Cart';
+      }
+    }
+  </script>
 </body>
 </html>

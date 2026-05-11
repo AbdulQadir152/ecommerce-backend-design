@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <section class="section">
+    <div class="container">
+      <h1 class="section-title">🛒 My Cart</h1>
+
+      <% if (items.length === 0) { %>
+        <div class="empty-cart">
+          <p>Your cart is empty.</p>
+          <a href="/products" class="btn btn-primary">Browse Products</a>
+        </div>
+      <% } else { %>
+
+        <div class="cart-layout">
+          <!-- Cart Items -->
+          <div class="cart-items">
+            <% items.forEach(item => { %>
+              <div class="cart-item" id="cart-item-<%= item.product._id %>">
+                <img
+                  src="<%= item.product.image %>"
+                  alt="<%= item.product.name %>"
+                  class="cart-item-img"
+                  onerror="this.src='/assets/images/placeholder.jpg'"
+                />
+                <div class="cart-item-info">
+                  <a href="/products/<%= item.product._id %>" class="cart-item-name"><%= item.product.name %></a>
+                  <span class="category"><%= item.product.category %></span>
+                  <p class="price">$<%= item.product.price.toFixed(2) %></p>
+                </div>
+                <div class="cart-item-qty">
+                  <button class="qty-btn" onclick="changeQty('<%= item.product._id %>', 'remove')">−</button>
+                  <span class="qty-num" id="qty-<%= item.product._id %>"><%= item.quantity %></span>
+                  <button class="qty-btn" onclick="changeQty('<%= item.product._id %>', 'add')" data-stock="<%= item.product.stock %>">+</button>
+                </div>
+                <div class="cart-item-subtotal" id="subtotal-<%= item.product._id %>">
+                  $<%= (item.product.price * item.quantity).toFixed(2) %>
+                </div>
+                <form action="/cart/delete/<%= item.product._id %>" method="POST" class="cart-delete-form">
+                  <button type="submit" class="cart-delete-btn" title="Remove item">✕</button>
+                </form>
+              </div>
+            <% }); %>
+          </div>
+
+          <!-- Summary -->
+          <div class="cart-summary">
+            <h2 class="summary-title">Order Summary</h2>
+            <div class="summary-row">
+              <span>Items (<span id="summary-count"><%= totalItems %></span>)</span>
+              <span id="summary-total">$<%= grandTotal.toFixed(2) %></span>
+            </div>
+            <div class="summary-row summary-grand">
+              <span>Total</span>
+              <span id="grand-total">$<%= grandTotal.toFixed(2) %></span>
+            </div>
+            <button class="btn btn-primary btn-full checkout-btn" onclick="alert('Checkout coming soon!')">
+              Proceed to Checkout
+            </button>
+            <a href="/products" class="btn btn-outline btn-full" style="margin-top:12px;text-align:center;">
+              Continue Shopping
+            </a>
+          </div>
+        </div>
+
+      <% } %>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+  <script src="/js/main.js"></script>
+  <script>
+    // Price lookup for client-side subtotal updates
+    const prices = {
+      <% items.forEach(item => { %>
+        '<%= item.product._id %>': <%= item.product.price %>,
+      <% }); %>
+    };
+
+    async function changeQty(productId, action) {
+      const url = action === 'add' ? `/cart/add/${productId}` : `/cart/remove/${productId}`;
+      const res  = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+      const data = await res.json();
+
+      if (!data.success) { alert(data.message); return; }
+
+      const qtyEl      = document.getElementById(`qty-${productId}`);
+      const subtotalEl = document.getElementById(`subtotal-${productId}`);
+      const itemEl     = document.getElementById(`cart-item-${productId}`);
+
+      let qty = parseInt(qtyEl.textContent);
+      qty = action === 'add' ? qty + 1 : qty - 1;
+
+      if (qty <= 0) {
+        itemEl.remove();
+      } else {
+        qtyEl.textContent    = qty;
+        subtotalEl.textContent = '$' + (prices[productId] * qty).toFixed(2);
+      }
+
+      // Update summary
+      document.getElementById('summary-count').textContent = data.totalItems;
+      recalcTotal();
+      updateCartBadge(data.totalItems);
+
+      // If cart is now empty, reload so the empty-cart message shows
+      if (data.totalItems === 0) location.reload();
+    }
+
+    function recalcTotal() {
+      let total = 0;
+      document.querySelectorAll('[id^="subtotal-"]').forEach(el => {
+        total += parseFloat(el.textContent.replace('$', '')) || 0;
+      });
+      document.getElementById('summary-total').textContent = '$' + total.toFixed(2);
+      document.getElementById('grand-total').textContent   = '$' + total.toFixed(2);
+    }
+  </script>
+</body>
+</html>

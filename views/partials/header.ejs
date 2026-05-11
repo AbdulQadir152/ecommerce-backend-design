@@ -8,6 +8,11 @@
       <% if (user) { %>
         <% if (user.role === 'admin') { %>
           <a href="/admin/add-product">Add Product</a>
+        <% } else { %>
+          <a href="/cart" class="cart-link">
+            🛒 Cart
+            <span class="cart-badge" id="cart-badge" style="display:none;">0</span>
+          </a>
         <% } %>
         <span class="nav-user">Hi, <%= user.name.split(' ')[0] %></span>
         <a href="/logout" class="btn btn-outline" style="padding: 6px 16px;">Logout</a>
@@ -18,3 +23,13 @@
     </nav>
   </div>
 </header>
+
+<% if (user && user.role !== 'admin') { %>
+<script>
+  // Load cart count on every page
+  fetch('/cart/count')
+    .then(r => r.json())
+    .then(data => updateCartBadge(data.totalItems))
+    .catch(() => {});
+</script>
+<% } %>

@@ -1,6 +1,6 @@
-const express    = require('express');
-const path       = require('path');
-const mongoose   = require('mongoose');
+const express      = require('express');
+const path         = require('path');
+const mongoose     = require('mongoose');
 const cookieParser = require('cookie-parser');
 
 if (process.env.NODE_ENV !== 'production') {
@@ -33,6 +33,7 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/', require('./routes/index'));
 app.use('/', require('./routes/auth'));
 app.use('/', require('./routes/admin'));
+app.use('/', require('./routes/cart'));
 
 // Start server
 const PORT = process.env.PORT || 3000;
