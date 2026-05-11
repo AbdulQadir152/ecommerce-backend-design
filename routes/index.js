@@ -13,12 +13,15 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Product Listing Page with Search
+// Product Listing Page with Search + Pagination
 router.get('/products', async (req, res) => {
   try {
     const { search } = req.query;
-    let query = {};
+    const page    = parseInt(req.query.page) || 1;
+    const limit   = 6;
+    const skip    = (page - 1) * limit;
 
+    let query = {};
     if (search) {
       query = {
         $or: [
@@ -28,8 +31,17 @@ router.get('/products', async (req, res) => {
       };
     }
 
-    const products = await Product.find(query);
-    res.render('products', { title: 'All Products', products, search: search || '' });
+    const total    = await Product.countDocuments(query);
+    const products = await Product.find(query).skip(skip).limit(limit);
+    const totalPages = Math.ceil(total / limit);
+
+    res.render('products', {
+      title: 'All Products',
+      products,
+      search: search || '',
+      currentPage: page,
+      totalPages,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');

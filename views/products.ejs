@@ -8,20 +8,13 @@
 </head>
 <body>
   <%- include('partials/header') %>
-
   <section class="section">
     <div class="container">
       <h2 class="section-title">All Products</h2>
 
       <!-- Search Bar -->
       <form class="search-form" action="/products" method="GET">
-        <input
-          type="text"
-          name="search"
-          placeholder="Search by name or category..."
-          value="<%= search %>"
-          class="search-input"
-        />
+        <input type="text" name="search" placeholder="Search by name or category..." value="<%= search %>" class="search-input" />
         <button type="submit" class="btn btn-primary">Search</button>
         <% if (search) { %>
           <a href="/products" class="btn btn-outline">Clear</a>
@@ -29,9 +22,7 @@
       </form>
 
       <% if (search) { %>
-        <p class="search-result-text">
-          Showing results for "<strong><%= search %></strong>" — <%= products.length %> product(s) found
-        </p>
+        <p class="search-result-text">Showing results for "<strong><%= search %></strong>"</p>
       <% } %>
 
       <% if (products.length === 0) { %>
@@ -52,10 +43,25 @@
             </div>
           <% }) %>
         </div>
+
+        <!-- Pagination -->
+        <% if (totalPages > 1) { %>
+          <div class="pagination">
+            <% if (currentPage > 1) { %>
+              <a href="/products?page=<%= currentPage - 1 %><%= search ? '&search=' + search : '' %>" class="page-btn">← Prev</a>
+            <% } %>
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <a href="/products?page=<%= i %><%= search ? '&search=' + search : '' %>"
+                 class="page-btn <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+            <% } %>
+            <% if (currentPage < totalPages) { %>
+              <a href="/products?page=<%= currentPage + 1 %><%= search ? '&search=' + search : '' %>" class="page-btn">Next →</a>
+            <% } %>
+          </div>
+        <% } %>
       <% } %>
     </div>
   </section>
-
   <%- include('partials/footer') %>
   <script src="/js/main.js"></script>
 </body>

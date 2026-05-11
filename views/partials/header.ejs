@@ -5,8 +5,16 @@
     <nav class="nav" id="nav">
       <a href="/">Home</a>
       <a href="/products">Products</a>
-      <a href="#">About</a>
-      <a href="#">Contact</a>
+      <% if (user) { %>
+        <% if (user.role === 'admin') { %>
+          <a href="/admin/add-product">Add Product</a>
+        <% } %>
+        <span class="nav-user">Hi, <%= user.name.split(' ')[0] %></span>
+        <a href="/logout" class="btn btn-outline" style="padding: 6px 16px;">Logout</a>
+      <% } else { %>
+        <a href="/login">Login</a>
+        <a href="/signup" class="btn btn-primary" style="padding: 6px 16px;">Sign Up</a>
+      <% } %>
     </nav>
   </div>
 </header>
