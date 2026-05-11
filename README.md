@@ -1,10 +1,11 @@
 # 🛒 ShopEase - E-commerce Web Application
 
 <p>
-  A full-stack eCommerce web application built as part of the 
+  A full-stack E-commerce web application built as part of the 
   <strong>DevelopersHub Internship Program</strong>. 
   The project features a fully responsive design for both desktop and mobile, 
-  dynamic product listings powered by MongoDB, and a complete backend built with 
+  dynamic product listings powered by MongoDB, secure user authentication using JWT, 
+  cart functionality for customers, and a complete backend built with 
   Node.js and Express.js.
 </p>
 
@@ -12,13 +13,11 @@
 
 <h2>🚀 Live Demo</h2>
 
-<p><em>Coming in Week 3 after deployment</em></p>
-
-<hr>
-
-<h2>📸 Screenshots</h2>
-
-<p><em>Will be added soon</em></p>
+<p>
+  <a href="https://ecommerce-backend-design-production-677a.up.railway.app/" target="_blank">
+    View Live Project
+  </a>
+</p>
 
 <hr>
 
@@ -50,11 +49,11 @@
     </tr>
     <tr>
       <td><strong>Authentication</strong></td>
-      <td>JWT (Week 3)</td>
+      <td>JWT + Cookies</td>
     </tr>
     <tr>
       <td><strong>Deployment</strong></td>
-      <td>Render / Vercel (Week 3)</td>
+      <td>Railway</td>
     </tr>
     <tr>
       <td><strong>Version Control</strong></td>
@@ -69,27 +68,37 @@
 
 ```bash
 ecommerce-backend-design/
+├── middleware/
+│   └── authMiddleware.js
 ├── models/
-│   └── Product.js              # MongoDB Product schema
+│   ├── Product.js
+│   └── User.js
 ├── routes/
-│   └── index.js                # All application routes
+│   ├── authRoutes.js
+│   ├── cartRoutes.js
+│   └── productRoutes.js
 ├── views/
+│   ├── auth/
+│   │   ├── login.ejs
+│   │   └── signup.ejs
 │   ├── partials/
-│   │   ├── header.ejs          # Shared header
-│   │   └── footer.ejs          # Shared footer
-│   ├── home.ejs                # Home page
-│   ├── products.ejs            # Product listing page with search
-│   └── product-detail.ejs      # Product detail page
+│   │   ├── header.ejs
+│   │   └── footer.ejs
+│   ├── add-product.ejs
+│   ├── cart.ejs
+│   ├── home.ejs
+│   ├── product-detail.ejs
+│   └── products.ejs
 ├── public/
 │   ├── css/
-│   │   └── style.css           # Global styles + media queries
+│   │   └── style.css
 │   └── js/
-│       └── main.js             # Client-side JavaScript
+│       └── main.js
 ├── assets/
-│   └── images/                 # Static image assets
-├── app.js                      # Express server entry point
-├── seed.js                     # Database seeder script
-├── .env                        # Environment variables (not committed)
+│   └── images/
+├── app.js
+├── seed.js
+├── .env
 ├── .gitignore
 ├── package.json
 └── README.md
@@ -108,11 +117,11 @@ ecommerce-backend-design/
     <a href="https://nodejs.org/" target="_blank">Node.js</a> (v18 or above)
   </li>
   <li>
-    <a href="https://www.mongodb.com/" target="_blank">MongoDB</a> (local) 
-    or a 
+    <a href="https://www.mongodb.com/" target="_blank">MongoDB</a>
+    or
     <a href="https://www.mongodb.com/cloud/atlas" target="_blank">
       MongoDB Atlas
-    </a> account
+    </a>
   </li>
   <li>
     <a href="https://git-scm.com/" target="_blank">Git</a>
@@ -144,13 +153,10 @@ npm install
 <h4>4️⃣ Create a <code>.env</code> file in the root directory</h4>
 
 ```env
-MONGODB_URI=mongodb://localhost:27017/shopease
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
 PORT=3000
 ```
-
-<p>
-  If using MongoDB Atlas, replace the URI with your Atlas connection string.
-</p>
 
 <h4>5️⃣ Seed the database with sample products</h4>
 
@@ -169,6 +175,24 @@ npm run dev
 ```bash
 http://localhost:3000
 ```
+
+<hr>
+
+<h2>📋 Features</h2>
+
+<ul>
+  <li>Fully responsive E-commerce UI for desktop and mobile</li>
+  <li>Dynamic product listing using MongoDB</li>
+  <li>Product detail pages with database integration</li>
+  <li>Server-side product search functionality</li>
+  <li>User Signup and Login using JWT authentication</li>
+  <li>Protected routes using authentication middleware</li>
+  <li>Add Product functionality for admin users</li>
+  <li>Cart functionality for customers</li>
+  <li>Admin restriction for cart access</li>
+  <li>Reusable EJS partials and clean MVC-like structure</li>
+  <li>Railway deployment with environment variables</li>
+</ul>
 
 <hr>
 
@@ -191,20 +215,24 @@ http://localhost:3000
       <td>Product Listing Page</td>
     </tr>
     <tr>
-      <td><code>/products?search=query</code></td>
-      <td>Search Results</td>
-    </tr>
-    <tr>
       <td><code>/products/:id</code></td>
       <td>Product Detail Page</td>
     </tr>
     <tr>
-      <td><code>/login</code></td>
-      <td>Login <em>(Week 3)</em></td>
+      <td><code>/signup</code></td>
+      <td>User Signup Page</td>
     </tr>
     <tr>
-      <td><code>/signup</code></td>
-      <td>Signup <em>(Week 3)</em></td>
+      <td><code>/login</code></td>
+      <td>User Login Page</td>
+    </tr>
+    <tr>
+      <td><code>/add-product</code></td>
+      <td>Add Product Page (Admin)</td>
+    </tr>
+    <tr>
+      <td><code>/cart</code></td>
+      <td>User Cart Page</td>
     </tr>
   </tbody>
 </table>
@@ -217,62 +245,37 @@ http://localhost:3000
 
 <ul>
   <li>Set up Node.js + Express.js server</li>
-  <li>
-    Created EJS templates for Home, Product Listing, and Product Detail pages
-  </li>
-  <li>
-    Served static pages through Express routes 
-    (<code>/</code>, <code>/products</code>, <code>/products/:id</code>)
-  </li>
-  <li>
-    Implemented fully responsive design using CSS media queries
-  </li>
-  <li>
-    Built mobile hamburger menu with vanilla JavaScript
-  </li>
-  <li>
-    Organized clean folder structure (routes, views, public, assets)
-  </li>
-  <li>Pushed code to GitHub</li>
+  <li>Created EJS templates for core pages</li>
+  <li>Served static pages using Express routes</li>
+  <li>Implemented responsive design using CSS media queries</li>
+  <li>Built mobile hamburger menu using vanilla JavaScript</li>
+  <li>Organized clean folder structure</li>
+  <li>Pushed project to GitHub</li>
 </ul>
 
 <h3>✅ Week 2 — Database Integration & Dynamic Content</h3>
 
 <ul>
   <li>Connected MongoDB database using Mongoose</li>
-  <li>
-    Created <code>Product</code> schema with fields:
-    name, price, category, image, description, and stock
-  </li>
-  <li>
-    Built <code>seed.js</code> to populate the database with sample products
-  </li>
-  <li>
-    Home page dynamically renders featured products from the database
-  </li>
-  <li>
-    Product Listing page fetches and displays all products in a grid layout
-  </li>
-  <li>
-    Product Detail page fetches a single product by MongoDB <code>_id</code>
-  </li>
-  <li>
-    Implemented server-side search (filter by name or category via query string)
-  </li>
-  <li>
-    Added <code>.env</code> support using <code>dotenv</code> for secure configuration
-  </li>
-  <li>Pushed updated code to GitHub</li>
+  <li>Created Product schema and database models</li>
+  <li>Implemented dynamic product rendering</li>
+  <li>Built Product Detail functionality using MongoDB IDs</li>
+  <li>Implemented server-side search functionality</li>
+  <li>Added environment variable support using dotenv</li>
+  <li>Seeded database with sample products</li>
 </ul>
 
-<h3>⏳ Week 3 — Auth, Pagination & Deployment (Upcoming)</h3>
+<h3>✅ Week 3 — Authentication, Deployment & Cart</h3>
 
 <ul>
-  <li>User authentication using JWT</li>
-  <li>Login and Signup pages</li>
-  <li>Add product functionality via form</li>
-  <li>Pagination for the Product Listing page</li>
-  <li>Deploy to Render or Vercel with live URL</li>
+  <li>Implemented JWT-based user authentication</li>
+  <li>Created Login and Signup functionality</li>
+  <li>Built protected routes using middleware</li>
+  <li>Added Add Product functionality for admin users</li>
+  <li>Implemented customer cart functionality</li>
+  <li>Restricted cart access for admin users</li>
+  <li>Deployed application on Railway</li>
+  <li>Configured production environment variables</li>
 </ul>
 
 <hr>
@@ -280,27 +283,23 @@ http://localhost:3000
 <h2>📦 NPM Scripts</h2>
 
 ```bash
-npm start        # Start production server
-npm run dev      # Start development server with nodemon
-node seed.js     # Seed the database with sample products
+npm start
+npm run dev
+node seed.js
 ```
 
 <hr>
 
 <h2>🔐 Environment Variables</h2>
 
-<p>
-  Create a <code>.env</code> file in the root of the project with the following:
-</p>
-
 ```env
-MONGODB_URI=mongodb://localhost:27017/shopease
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
 PORT=3000
 ```
 
 <p>
-  ⚠️ Never commit your <code>.env</code> file. 
-  It is already listed in <code>.gitignore</code>.
+  ⚠️ Never commit your <code>.env</code> file.
 </p>
 
 <hr>
@@ -311,22 +310,27 @@ PORT=3000
   <li>
     <a href="https://developershub.com" target="_blank">
       DevelopersHub
-    </a> — Internship Program
+    </a>
   </li>
   <li>
     <a href="https://unsplash.com" target="_blank">
       Unsplash
-    </a> — Product images used for demo purposes
+    </a>
   </li>
   <li>
     <a href="https://www.mongodb.com/" target="_blank">
       MongoDB
-    </a> — Database
+    </a>
   </li>
   <li>
     <a href="https://mongoosejs.com/" target="_blank">
       Mongoose
-    </a> — MongoDB ODM for Node.js
+    </a>
+  </li>
+  <li>
+    <a href="https://railway.app/" target="_blank">
+      Railway
+    </a>
   </li>
 </ul>
 
@@ -335,5 +339,6 @@ PORT=3000
 <h2>📄 License</h2>
 
 <p>
-  This project is for educational purposes as part of an internship program.
+  This project is built for educational purposes as part of the 
+  DevelopersHub Internship Program.
 </p>
