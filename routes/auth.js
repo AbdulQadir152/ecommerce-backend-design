@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const User = require('../models/User.js');
-
+const User = require(`${__dirname}/../models/User.js`);
 // GET Login page
 router.get('/login', (req, res) => {
   if (req.cookies.token) return res.redirect('/');
